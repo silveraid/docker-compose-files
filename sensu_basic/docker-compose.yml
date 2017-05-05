@@ -1,0 +1,50 @@
+api:
+  image: sstarcher/sensu
+  command: api
+  environment:
+    TRANSPORT_NAME: rabbitmq
+  links:
+    - redis
+    - rabbitmq
+
+server:
+  image: sstarcher/sensu
+  command: server
+  environment:
+    TRANSPORT_NAME: rabbitmq
+  links:
+    - redis
+    - api
+    - rabbitmq
+
+client:
+  image: sstarcher/sensu
+  command: client
+  environment:
+    TRANSPORT_NAME: rabbitmq
+    CLIENT_NAME: bob
+    CLIENT_ADDRESS: 1.2.3.4
+  links:
+    - rabbitmq
+
+uchiwa:
+  image: sstarcher/uchiwa
+  environment:
+    SENSU_DC_NAME: sensu
+    SENSU_HOSTNAME: sensu
+    SENSU_SERVICE_PORT: 4567
+  links:
+    - api:sensu
+    - rabbitmq
+  ports:
+    - '3000:3000'
+
+rabbitmq:
+  image: rabbitmq:3-management
+  ports:
+    - '5672:5672'
+    - '15672:15672'
+  
+redis:
+  image: redis:3
+
