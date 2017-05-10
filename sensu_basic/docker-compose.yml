@@ -6,6 +6,8 @@ api:
   links:
     - redis
     - rabbitmq
+  ports:
+    - '4567:4567'
 
 server:
   image: sstarcher/sensu
