@@ -1,0 +1,21 @@
+version: '2'
+services:
+  mongo:
+    image: "mongo:3"
+
+  elasticsearch:
+    image: "elasticsearch:2"
+    command: "elasticsearch -Des.cluster.name='graylog'"
+
+  graylog:
+    image: graylog2/server:latest
+    environment:
+      GRAYLOG_PASSWORD_SECRET: somepasswordpepper
+      GRAYLOG_ROOT_PASSWORD_SHA2: e3c652f0ba0b4801205814f8b6bc49672c4c74e25b497770bb89b22cdeb4e951
+      GRAYLOG_WEB_ENDPOINT_URI: http://127.0.0.1:9000/api
+    links:
+      - mongo:mongo
+      - elasticsearch:elasticsearch
+    ports:
+      - "9000:9000"
+      - "12201:12201"
